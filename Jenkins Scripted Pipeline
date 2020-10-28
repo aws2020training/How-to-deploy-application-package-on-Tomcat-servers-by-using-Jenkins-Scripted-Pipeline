@@ -1,10 +1,10 @@
 node {
         def mvnHome
-        mvnHome = tool 'Maven 3.5.2'
-        def servers = ["192.168.1.72","192.168.1.73"]
+        mvnHome = tool 'M3'
+        def servers = ["172.31.7.55"]
         try {
         stage('Preparation') { // for display purposes Get some code from a GitHub repository
-            git 'https://github.com/vipin-k/spring-framework-petclinic.git'
+            git 'https://github.com/aws2020training/spring-framework-petclinic.git'
             // Get the Maven tool.
             // ** NOTE: This 'M3' Maven tool must be configured
             // **       in the global configuration.   
@@ -35,15 +35,15 @@ node {
         for (server in servers)
         { 
                 stage('Stop Tomcat') {
-                sh "ssh -T 'root@${server}' /opt/apache-tomcat-8.5.31/bin/./shutdown.sh"
+                sh "ssh -T 'root@${server}' /home/ubuntu/apache-tomcat-8.5.54/bin/./shutdown.sh"
                 }
         
                 stage('War File Deployment') {
-                sh "ssh -T 'root@${server}' rm -f /opt/apache-tomcat-8.5.31/webapps/petclinic.war rm -fr /opt/apache-tomcat-8.5.31/webapps/petclinic"
-                sh "scp target/petclinic.war 'root@${server}':/opt/apache-tomcat-8.5.31/webapps/"
+                sh "ssh -T 'root@${server}' rm -f /home/ubuntu/apache-tomcat-8.5.54/webapps/petclinic.war rm -fr /home/ubuntu/apache-tomcat-8.5.54/webapps/petclinic"
+                sh "scp target/petclinic.war 'root@${server}':/home/ubuntu/apache-tomcat-8.5.54/webapps/"
                 }
                 stage('Start Tomcat') {
-                sh "ssh -T 'root@${server}' /opt/apache-tomcat-8.5.31/bin/./startup.sh"
+                sh "ssh -T 'root@${server}' /home/ubuntu/apache-tomcat-8.5.54/bin/./startup.sh"
                 }
         }
         notify('Sucess')
@@ -55,7 +55,7 @@ CurrentBuid.result = 'FAILURE'
 }
 def notify(status){ 
     emailext (
-      to: "vipinkumargupta@gmail.com",
+      to: "awstraining2019@gmail.com",
       subject: "${status}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
       body: """<p>${status}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
         <p>Check console output at <a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a></p>""",
